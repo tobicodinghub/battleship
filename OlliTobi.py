@@ -28,49 +28,36 @@ def place_ships(matrix, ships):
 
 def check_out_of_bounds(x, y, dir, ship):
     if dir == "h":
-        if y + ships[ship] > 9: 
-            return False 
-        else:
-            return True     
+        return y + ships[ship] <= 9
     else:
-        if x + ships[ship] > 9:
-            return False 
-        else: 
-            return True 
-
+        return x + ships[ship] <= 9
 def has_collision(x, y, dir, ship, matrix):
-    z = 0
+    print(dir)
     if dir == "h":
-        for i in (ships[ship]):
+        for i in range(ships[ship]):
             print(i)
-            if (matrix[x][y+i] == 1 or matrix[x+1][y+i] == 1 or matrix[x-1][y+i] == 1 or matrix[x+1][y+i+1] == 1 or matrix[x-1][y+i-1] == 1):
-                return False
-            else:
+            if (y+i <= 9 or matrix[x][y+i] == 0 or matrix[x+1][y+i] == 0 or matrix[x-1][y+i] == 0 or matrix[x][y+i+1] == 0 or matrix[x][y+i-1] == 0):
                 return True
+        return False
     else:
-        for i in (ships[ship]):
-            if (matrix[x+i][y] == 1 or matrix[x+i][y+1] == 1 or matrix[x+i][y-1] == 1 or matrix[x+i+1][y+1] == 1 or matrix[x+i-1][y-1] == 1):
-                return False
-            else:
+        for i in range(ships[ship]):
+            print(i)
+            if (x+i <= 9 or matrix[x+i][y] == 0 or matrix[x+i][y+1] == 0 or matrix[x+i][y-1] == 0 or matrix[x+i+1][y] == 0 or matrix[x+i-1][y] == 0):
                 return True
-        
+        return False
+            
 def auto_place_ships(matrix, ships):
-    for ship in ships:
+    for ship in ships.keys():
         x = random.randint(0, 8)
         y = random.randint(0, 8)
         direction = random.choice(["h", "v"])
+        while not check_out_of_bounds(x,y,direction, ship) and has_collision(x,y,direction, ship, matrix):
+                x = random.randint(0, 8)
+                y = random.randint(0, 8)
         if direction == "h":
-            while check_out_of_bounds(x,y,direction, ship) == False:
-                while has_collision(x,y,direction, ship, matrix) == False:
-                    x = random.randint(0, 8)
-                    y = random.randint(0, 8)
             for i in range(ships[ship]):
                 matrix[x][y+i] = 1
         else:
-            while check_out_of_bounds(x,y,direction, ship) == False:
-               while has_collision(x,y,direction, ship, matrix) == False:
-                    x = random.randint(0, 8)
-                    y = random.randint(0, 8)
             for i in range(ships[ship]):
                 matrix[x+i][y] = 1
     print_matrix(matrix)
