@@ -36,22 +36,22 @@ def has_collision(x, y, dir, ship, matrix):
     if dir == "h":
         for i in range(ships[ship]):
             print(i)
-            if (y+i <= 9 or matrix[x][y+i] == 0 or matrix[x+1][y+i] == 0 or matrix[x-1][y+i] == 0 or matrix[x][y+i+1] == 0 or matrix[x][y+i-1] == 0):
-                return True
-        return False
+            if (y+i >= 9 or matrix[x][y+i] == 1 or matrix[x+1][y+i] == 1 or matrix[x-1][y+i] == 1 or matrix[x][y+i+1] == 1 or matrix[x][y+i-1] == 1):
+                return False
+        return True
     else:
         for i in range(ships[ship]):
             print(i)
-            if (x+i <= 9 or matrix[x+i][y] == 0 or matrix[x+i][y+1] == 0 or matrix[x+i][y-1] == 0 or matrix[x+i+1][y] == 0 or matrix[x+i-1][y] == 0):
-                return True
-        return False
+            if (x+i >= 9 or matrix[x+i][y] == 1 or matrix[x+i][y+1] == 1 or matrix[x+i][y-1] == 1 or matrix[x+i+1][y] == 1 or matrix[x+i-1][y] == 1):
+                return False
+        return True
             
 def auto_place_ships(matrix, ships):
     for ship in ships.keys():
         x = random.randint(0, 8)
         y = random.randint(0, 8)
         direction = random.choice(["h", "v"])
-        while not check_out_of_bounds(x,y,direction, ship) and has_collision(x,y,direction, ship, matrix):
+        while not check_out_of_bounds(x,y,direction, ship) or not has_collision(x,y,direction, ship, matrix):
                 x = random.randint(0, 8)
                 y = random.randint(0, 8)
         if direction == "h":
