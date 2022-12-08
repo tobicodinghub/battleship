@@ -1,3 +1,11 @@
+common_ships = {
+    "carrier": 5,
+    "battleship": 4,
+    "cruiser": 3,
+    "submarine": 3,
+    "destroyer": 2
+}
+
 import random
 class Sea:
     def __init__(self, ships):
