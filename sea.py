@@ -63,5 +63,3 @@ class Sea:
                     matrix[x+i][y] = 1
         self.print_matrix(matrix)
 
-sea1 = Sea(common_ships)
-sea1.auto_place_ships(sea1.matrix)
