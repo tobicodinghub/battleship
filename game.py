@@ -1,4 +1,5 @@
 import random
+from tkinter import *
 common_ships = {
     "carrier": 5,
     "battleship": 4,
@@ -6,7 +7,6 @@ common_ships = {
     "submarine": 3,
     "destroyer": 2
 }
-
 
 class Game():
     def __init__(self, player1, computer):
@@ -35,9 +35,9 @@ class Game():
             self.turn = 1
 
     def check_winner(self):
-        if self.player1.ships_sunk == 5:
+        if self.player1.tiles_sunk == 17:
             self.winner = 2
-        elif self.computer.ships_sunk == 5:
+        elif self.computer.tiles_sunk == 17:
             self.winner = 1
 
 
@@ -45,7 +45,7 @@ class Player():
     def __init__(self, sea):
         self.sea = sea
         self.sea.place_ships()
-        self.ships_sunk = 0
+        self.tiles_sunk = 0
         self.visible_matrix = [[0 for x in range(10)] for y in range(10)]
 
     def print_visible_matrix(self):
@@ -54,51 +54,24 @@ class Player():
         print('\n')
 
     def take_shot(self, computer):
-        x = int(input("x: "))+1
-        y = int(input("y: "))+1
+        x = int(input("x: "))-1
+        y = int(input("y: "))-1
         if computer.sea.matrix[x][y] == 1:
             print("Hit!")
             computer.sea.matrix[x][y] = 2
             self.visible_matrix[x][y] = "H"
-            self.check_sunk(x, y)
+            self.tiles_sunk += 1
         else:
             print("Miss!")
             computer.sea.matrix[x][y] = 3
             self.visible_matrix[x][y] = "W"
-
-    def check_sunk(self, x, y):
-        if self.sea.matrix[x][y-1] == 2:
-            self.check_sunk((x),(y-1))
-        elif self.sea.matrix[x][y+1] == 2:
-            self.check_sunk((x),(y+1))
-        elif self.sea.matrix[x-1][y] == 2:
-            self.check_sunk((x-1,y))
-        elif self.sea.matrix[x+1][y] == 2:
-            self.check_sunk((x+1,y))
-        elif self.sea.matrix[x][y-1] == 1:
-            return
-        elif self.sea.matrix[x][y+1] == 1:
-            return
-        elif self.sea.matrix[x-1][y] == 1:
-            return
-        elif self.sea.matrix[x+1][y] == 1:
-            return
-        self.ships_sunk += 1
-        print("Ship sunk!")
 
 
 class Computer():
     def __init__(self, sea):
         self.sea = sea
         self.sea.auto_place_ships()
-        self.ships_sunk = 0
-
-    def check_sunk(self, x, y):
-        if self.sea.matrix[x][y-1] == 1 or self.sea.matrix[x][y+1] == 1 or self.sea.matrix[x-1][y] == 1 or self.sea.matrix[x+1][y] == 1:
-            return
-        else:
-            self.ships_sunk += 1
-            print("Ship sunk!")
+        self.tiles_sunk = 0
 
     def auto_take_shot(self, player):
         x = random.randint(0, 9)
@@ -109,10 +82,11 @@ class Computer():
         if player.sea.matrix[x][y] == 1:
             print("Computer Hit!")
             player.sea.matrix[x][y] = 2
-            self.check_sunk(x, y)
+            self.tiles_sunk += 1
         else:
             print("Computer Miss!")
             player.sea.matrix[x][y] = 3
+
 
 class Sea:
     def __init__(self, ships):
@@ -131,9 +105,18 @@ class Sea:
             y = int(input("y: "))
             direction = input("direction: ")
             if direction == "h":
+                while not self.check_out_of_bounds(x, y, direction, ship) or not self.has_collision(x, y, direction, ship, self.matrix):
+                    print("Invalid placement!")
+                    x = int(input("x: "))
+                    y = int(input("y: "))
                 for i in range(self.ships[ship]):
                     self.matrix[x][y+i] = 1
-            else:
+            elif input == "v":
+                while not self.check_out_of_bounds(x, y, direction, ship) or not self.has_collision(x, y, direction, ship, self.matrix):
+                    print("Invalid placement!")
+                    x = int(input("x: "))
+                    y = int(input("y: "))
+                    direction = input("direction: ")
                 for i in range(self.ships[ship]):
                     self.matrix[x+i][y] = 1
             self.print_matrix()
