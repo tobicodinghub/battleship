@@ -1,3 +1,11 @@
+common_ships = {
+    "carrier": 5,
+    "battleship": 4,
+    "cruiser": 3,
+    "submarine": 3,
+    "destroyer": 2
+}
+
 import random
 class Sea:
     def __init__(self, ships):
@@ -55,5 +63,3 @@ class Sea:
                     matrix[x+i][y] = 1
         self.print_matrix(matrix)
 
-sea1 = Sea(common_ships)
-sea1.auto_place_ships(sea1.matrix)
