@@ -3,6 +3,8 @@ from tkinter import *
 from functools import partial
 import tkinter as tk
 from PIL import ImageTk, Image
+import winsound
+import customtkinter as ctk
 common_ships = {
     "carrier": 5,
     "battleship": 4,
@@ -15,9 +17,10 @@ number_to_path = {
     1: "rec.png",
     2: "crosscircle.png",
     3: "minus.png",
-    "H": "cross-sig.png",
+    "H": "cross-sign.png",
     "W": "minus.png"
 }
+
 
 class Window(tk.Tk):
     def __init__(self):
@@ -31,20 +34,16 @@ class Window(tk.Tk):
     def initialize_matrix(self, matrix, xc, yc):
         btns_frame = Frame(self)
         btns_frame.pack()
-        
 
         for row in range(len(matrix)):
             for col in range(len(matrix[row])):
                 i = matrix[row][col]
                 img = Image.open(str(number_to_path[i]))
-                img = img.resize((64, 64), Image.ANTIALIAS)
+                img = img.resize((64, 64))
                 test = ImageTk.PhotoImage(img)
                 label = Label(btns_frame, image=test)
                 label.image = test
-                #b = Button(btns_frame, text = i, image = test, height=3, width=5, padx="5px",
-                #pady="5px", activeforeground="blue", compound="center")
                 label.grid(row=row + 1, column=col)
-                
 
         btns_frame.place(x=xc, y=yc)
 
@@ -69,36 +68,60 @@ class Window(tk.Tk):
         dir4 = tk.StringVar(self)
         dir5 = tk.StringVar(self)
         var1 = tk.IntVar()
-        for ship in ships:
-            Label(self, text=ship, font=("Arial", 40)).place(
-                x=1200, y=150 + 150*i)
+        i = 0
+        l = ["carrier.png", "battleship2.png",
+             "cruiser.png", "submarine.png", "destroyer.png"]
+        for shippies in l:
+            img = Image.open(shippies)
+            img = img.resize((700, 33))
+            test = ImageTk.PhotoImage(img)
+            label = Label(self, image=test)
+            label.image = test
+            label.place(x=1000, y=200 + 150*i)
             i += 1
-        e1 = Entry(self, textvariable=x1).place(x=1200, y=250)
-        e2 = Entry(self, textvariable=y1).place(x=1350, y=250)
-        e3 = Entry(self, textvariable=dir1).place(x=1500, y=250)
-        button1 = Button(self, text="Place Ship", command=partial(
-            self.get_ship, x1, y1, dir1, a, b, c)).place(x=1650, y=250)
-        e4 = Entry(self, textvariable=x2).place(x=1200, y=400)
-        e5 = Entry(self, textvariable=y2).place(x=1350, y=400)
-        e6 = Entry(self, textvariable=dir2).place(x=1500, y=400)
-        button2 = Button(self, text="Place Ship", command=partial(
-            self.get_ship, x2, y2, dir2, a, b, c)).place(x=1650, y=400)
-        e7 = Entry(self, textvariable=x3).place(x=1200, y=550)
-        e8 = Entry(self, textvariable=y3).place(x=1350, y=550)
-        e9 = Entry(self, textvariable=dir3).place(x=1500, y=550)
-        button3 = Button(self, text="Place Ship", command=partial(
-            self.get_ship, x3, y3, dir3, a, b, c)).place(x=1650, y=550)
-        e10 = Entry(self, textvariable=x4).place(x=1200, y=700)
-        e11 = Entry(self, textvariable=y4).place(x=1350, y=700)
-        e12 = Entry(self, textvariable=dir4).place(x=1500, y=700)
-        button4 = Button(self, text="Place Ship", command=partial(
-            self.get_ship, x4, y4, dir4, a, b, c)).place(x=1650, y=700)
-        e13 = Entry(self, textvariable=x5).place(x=1200, y=850)
-        e14 = Entry(self, textvariable=y5).place(x=1350, y=850)
-        e15 = Entry(self, textvariable=dir5).place(x=1500, y=850)
-        button5 = Button(self, text="Place Ship", command=partial(
+        img = Image.open("button.png")
+        test = ImageTk.PhotoImage(img)
+        e1 = Entry(self, textvariable=x1, font=(
+            'Futura', 12)).place(x=1000, y=250)
+        e2 = Entry(self, textvariable=y1, font=(
+            'Futura', 12)).place(x=1200, y=250)
+        e3 = Entry(self, textvariable=dir1, font=(
+            'Futura', 12)).place(x=1400, y=250)
+        button1 = Button(self, text="Place Ship", image=test, command=partial(
+            self.get_ship, x1, y1, dir1, a, b, c)).place(x=1600, y=250)
+        e4 = Entry(self, textvariable=x2, font=(
+            'Futura', 12)).place(x=1000, y=400)
+        e5 = Entry(self, textvariable=y2, font=(
+            'Futura', 12)).place(x=1200, y=400)
+        e6 = Entry(self, textvariable=dir2, font=(
+            'Futura', 12)).place(x=1400, y=400)
+        button2 = Button(self, text="Place Ship", image=test, command=partial(
+            self.get_ship, x2, y2, dir2, a, b, c)).place(x=1600, y=400)
+        e7 = Entry(self, textvariable=x3, font=(
+            'Futura', 12)).place(x=1000, y=550)
+        e8 = Entry(self, textvariable=y3, font=(
+            'Futura', 12)).place(x=1200, y=550)
+        e9 = Entry(self, textvariable=dir3, font=(
+            'Futura', 12)).place(x=1400, y=550)
+        button3 = Button(self, text="Place Ship", image=test, command=partial(
+            self.get_ship, x3, y3, dir3, a, b, c)).place(x=1600, y=550)
+        e10 = Entry(self, textvariable=x4, font=(
+            'Futura', 12)).place(x=1000, y=700)
+        e11 = Entry(self, textvariable=y4, font=(
+            'Futura', 12)).place(x=1200, y=700)
+        e12 = Entry(self, textvariable=dir4, font=(
+            'Futura', 12)).place(x=1400, y=700)
+        button4 = Button(self, text="Place Ship", image=test, command=partial(
+            self.get_ship, x4, y4, dir4, a, b, c)).place(x=1600, y=700)
+        e13 = Entry(self, textvariable=x5, font=(
+            'Futura', 12)).place(x=1000, y=850)
+        e14 = Entry(self, textvariable=y5, font=(
+            'Futura', 12)).place(x=1200, y=850)
+        e15 = Entry(self, textvariable=dir5, font=(
+            'Futura', 12)).place(x=1400, y=850)
+        button5 = Button(self, text="Place Ship", image=test, command=partial(
             self.get_last_ship, x5, y5, dir5, a, b, c, matrix, ships, var1))
-        button5.place(x=1650, y=850)
+        button5.place(x=1600, y=850)
         button5.wait_variable(var1)
 
     def destroy_frame(self):
@@ -116,9 +139,12 @@ class Window(tk.Tk):
         a.append(x.get())
         b.append(y.get())
         c.append(dir.get())
+        print(a)
+        print(b)
+        print(c)
         self.destroy_frame()
         self.place_ship(matrix, ships, a, b, c)
-        self.initialize_matrix(matrix, 150, 150)
+        self.initialize_matrix(matrix, 150, 200)
         var.set(1)
 
     def place_ship(self, matrix, ships, a, b, c):
@@ -175,7 +201,7 @@ class Game():
         self.window = Window()
         self.player1 = player1
         self.computer = computer
-        self.window.initialize_matrix(self.player1.sea.matrix, 150, 150)
+        self.window.initialize_matrix(self.player1.sea.matrix, 150, 200)
         self.turn = 1
         self.winner = None
         self.play_game()
@@ -184,12 +210,12 @@ class Game():
     def play_game(self):
         self.window.place_ships(self.player1.sea.matrix,
                                 self.player1.sea.ships)
-        self.window.initialize_matrix(self.player1.visible_matrix, 1200, 150)
+        self.window.initialize_matrix(self.player1.visible_matrix, 1000, 200)
         while not self.winner:
             self.take_turn()
             self.window.initialize_matrix(
-                self.player1.visible_matrix, 1200, 150)
-            self.window.initialize_matrix(self.player1.sea.matrix, 150, 150)
+                self.player1.visible_matrix, 1000, 200)
+            self.window.initialize_matrix(self.player1.sea.matrix, 150, 200)
             self.check_winner()
 
     def take_turn(self):
@@ -203,8 +229,10 @@ class Game():
     def check_winner(self):
         if self.player1.tiles_sunk == 17:
             self.winner = 2
+            winsound.PlaySound('win.wav', winsound.SND_FILENAME)
         elif self.computer.tiles_sunk == 17:
             self.winner = 1
+            winsound.PlaySound('win.wav', winsound.SND_FILENAME)
 
 
 class Player():
@@ -215,12 +243,12 @@ class Player():
 
     def take_shot(self, computer, x, y):
         if computer.sea.matrix[int(x)][int(y)] == 1:
-            print("Hit!")
+            winsound.PlaySound('hit.wav', winsound.SND_FILENAME)
             computer.sea.matrix[int(x)][int(y)] = 2
             self.visible_matrix[int(x)][int(y)] = "H"
             self.tiles_sunk += 1
         else:
-            print("Miss!")
+            winsound.PlaySound('miss.wav', winsound.SND_FILENAME)
             computer.sea.matrix[int(x)][int(y)] = 3
             self.visible_matrix[int(x)][int(y)] = "W"
 
@@ -238,11 +266,11 @@ class Computer():
             x = random.randint(0, 9)
             y = random.randint(0, 9)
         if player.sea.matrix[x][y] == 1:
-            print("Computer Hit!")
+            winsound.PlaySound('hit.wav', winsound.SND_FILENAME)
             player.sea.matrix[x][y] = 2
             self.tiles_sunk += 1
         else:
-            print("Computer Miss!")
+            winsound.PlaySound('miss.wav', winsound.SND_FILENAME)
             player.sea.matrix[x][y] = 3
 
 
@@ -250,11 +278,6 @@ class Sea:
     def __init__(self, ships):
         self.matrix = [[0 for x in range(10)] for y in range(10)]
         self.ships = ships
-
-    def print_matrix(self):
-        for row in self.matrix:
-            print(" ".join(str(cell) for cell in row))
-        print('\n')
 
     def check_out_of_bounds(self, x, y, dir, ship):
         if dir == "h":
@@ -276,12 +299,10 @@ class Sea:
 
     def auto_place_ships(self):
         for ship in self.ships.keys():
-            print("1")
             x = random.randint(0, 8)
             y = random.randint(0, 8)
             direction = random.choice(["h", "v"])
             while not self.check_out_of_bounds(x, y, direction, ship) or not self.has_collision(x, y, direction, ship, self.matrix):
-                print(2)
                 x = random.randint(0, 8)
                 y = random.randint(0, 8)
             if direction == "h":
