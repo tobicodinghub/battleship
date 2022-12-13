@@ -196,14 +196,14 @@ class Window(tk.Tk):
         ycoord = StringVar()
         ycoord.set("1")
         OPTIONS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
-        OptionMenu(self, xcoord, *OPTIONS).place(x=900, y=500)
-        OptionMenu(self, ycoord, *OPTIONS).place(x=900, y=540)
+        OptionMenu(self, xcoord, *OPTIONS).place(x=975, y=500)
+        OptionMenu(self, ycoord, *OPTIONS).place(x=975, y=540)
         img = Image.open("coordsbutton.png")
         img = img.resize((120, 70), Image.ANTIALIAS)
         test = ImageTk.PhotoImage(img)
         button6 = tk.Button(self, image=test, command=partial(
             self.return_coords2, xcoord, ycoord, player, computer, var2))
-        button6.place(x=860, y=580)
+        button6.place(x=925, y=580)
         button6.wait_variable(var2)
 
     def return_coords2(self, xcoord, ycoord, player, computer, var):
@@ -228,11 +228,11 @@ class Game():
 
     def play_game(self):
         self.window.place_ships(self.player1)
-        self.window.initialize_matrix(self.player1.visible_matrix, 1000, 200)
+        self.window.initialize_matrix(self.player1.visible_matrix, 1125, 200)
         while not self.winner:
             self.take_turn()
             self.window.initialize_matrix(
-                self.player1.visible_matrix, 1000, 200)
+                self.player1.visible_matrix, 1125, 200)
             self.window.initialize_matrix(self.player1.sea.matrix, 150, 200)
             self.check_winner()
 
@@ -304,10 +304,6 @@ class Sea:
             return x + self.ships[ship] <= 10
 
     def has_collision(self, x, y, dir, ship, matrix):
-        print(x)
-        print(y)
-        print(type(x))
-        print(type(y))
         if dir == "h":
             for i in range(self.ships[ship]):
                 if (y+i >= 9 or matrix[x][y+i] == 1 or matrix[x+1][y+i] == 1 or matrix[x-1][y+i] == 1 or matrix[x][y+i+1] == 1 or matrix[x][y+i-1] == 1):
