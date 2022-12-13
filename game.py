@@ -92,7 +92,7 @@ class Window(tk.Tk):
         e3 = Entry(self, textvariable=dir1, font=(
             'Futura', 12)).place(x=1400, y=250)
         button1 = Button(self, text="Place Ship", image=test, command=partial(
-            self.get_ship, x1, y1, dir1, a, b, c)).place(x=1600, y=250)
+            self.get_ship, x1, y1, dir1, a, b, c, matrix, "carrier", ships)).place(x=1600, y=250)
         e4 = Entry(self, textvariable=x2, font=(
             'Futura', 12)).place(x=1000, y=400)
         e5 = Entry(self, textvariable=y2, font=(
@@ -100,7 +100,7 @@ class Window(tk.Tk):
         e6 = Entry(self, textvariable=dir2, font=(
             'Futura', 12)).place(x=1400, y=400)
         button2 = Button(self, text="Place Ship", image=test, command=partial(
-            self.get_ship, x2, y2, dir2, a, b, c)).place(x=1600, y=400)
+            self.get_ship, x2, y2, dir2, a, b, c, matrix, "battleship", ships)).place(x=1600, y=400)
         e7 = Entry(self, textvariable=x3, font=(
             'Futura', 12)).place(x=1000, y=550)
         e8 = Entry(self, textvariable=y3, font=(
@@ -108,7 +108,7 @@ class Window(tk.Tk):
         e9 = Entry(self, textvariable=dir3, font=(
             'Futura', 12)).place(x=1400, y=550)
         button3 = Button(self, text="Place Ship", image=test, command=partial(
-            self.get_ship, x3, y3, dir3, a, b, c)).place(x=1600, y=550)
+            self.get_ship, x3, y3, dir3, a, b, c, matrix, "cruiser", ships)).place(x=1600, y=550)
         e10 = Entry(self, textvariable=x4, font=(
             'Futura', 12)).place(x=1000, y=700)
         e11 = Entry(self, textvariable=y4, font=(
@@ -116,7 +116,7 @@ class Window(tk.Tk):
         e12 = Entry(self, textvariable=dir4, font=(
             'Futura', 12)).place(x=1400, y=700)
         button4 = Button(self, text="Place Ship", image=test, command=partial(
-            self.get_ship, x4, y4, dir4, a, b, c)).place(x=1600, y=700)
+            self.get_ship, x4, y4, dir4, a, b, c, matrix, "submarine", ships)).place(x=1600, y=700)
         e13 = Entry(self, textvariable=x5, font=(
             'Futura', 12)).place(x=1000, y=850)
         e14 = Entry(self, textvariable=y5, font=(
@@ -124,7 +124,7 @@ class Window(tk.Tk):
         e15 = Entry(self, textvariable=dir5, font=(
             'Futura', 12)).place(x=1400, y=850)
         button5 = Button(self, text="Place Ship", image=test, command=partial(
-            self.get_last_ship, x5, y5, dir5, a, b, c, matrix, ships, var1))
+            self.get_last_ship, x5, y5, dir5, a, b, c, matrix, "destroyer", var1, ships))
         button5.place(x=1600, y=850)
         button5.wait_variable(var1)
 
@@ -134,48 +134,49 @@ class Window(tk.Tk):
                 children.destroy()
                 self.limg.pack()
 
-    def get_ship(self, x, y, dir, a, b, c):
+    def get_ship(self, x, y, dir, a, b, c, matrix, ship, ships):
         a.append(x.get())
         b.append(y.get())
         c.append(dir.get())
+        self.place_ship(matrix, ship, a, b, c, ships)
+        self.initialize_matrix(matrix, 150, 200)
 
-    def get_last_ship(self, x, y, dir, a, b, c, matrix, ships, var):
+    def get_last_ship(self, x, y, dir, a, b, c, matrix, ship, var, ships):
         a.append(x.get())
         b.append(y.get())
         c.append(dir.get())
         self.destroy_frame()
-        self.place_ship(matrix, ships, a, b, c)
+        self.place_ship(matrix, ship, a, b, c, ships)
         self.initialize_matrix(matrix, 150, 200)
         var.set(1)
 
-    def place_ship(self, matrix, ships, a, b, c):
-        for ship in ships:
-            if ship == "carrier":
-                x = a[0]
-                y = b[0]
-                dir = c[0]
-            elif ship == "battleship":
-                x = a[1]
-                y = b[1]
-                dir = c[1]
-            elif ship == "cruiser":
-                x = a[2]
-                y = b[2]
-                dir = c[2]
-            elif ship == "submarine":
-                x = a[3]
-                y = b[3]
-                dir = c[3]
-            elif ship == "destroyer":
-                x = a[4]
-                y = b[4]
-                dir = c[4]
-            if dir == "h":
-                for i in range(ships[ship]):
-                    matrix[int(x)][int(y) + i] = 1
-            else:
-                for i in range(ships[ship]):
-                    matrix[int(x) + i][int(y)] = 1
+    def place_ship(self, matrix, ship, a, b, c, ships):
+        if ship == "carrier":
+            x = a[0]
+            y = b[0]
+            dir = c[0]
+        if ship == "battleship":
+            x = a[1]
+            y = b[1]
+            dir = c[1]
+        if ship == "cruiser":
+            x = a[2]
+            y = b[2]
+            dir = c[2]
+        if ship == "submarine":
+            x = a[3]
+            y = b[3]
+            dir = c[3]
+        if ship == "destroyer":
+            x = a[4]
+            y = b[4]
+            dir = c[4]
+        if dir == "h":
+            for i in range(ships[ship]):
+                matrix[int(x)-1][int(y) + i -1] = 1
+        else:
+            for i in range(ships[ship]):
+                matrix[int(x)-1 + i][int(y)-1] = 1
 
     def return_coords(self, player, computer):
         var2 = tk.IntVar()
