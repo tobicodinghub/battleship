@@ -1,7 +1,8 @@
 import random
-from tkinter import *
 from functools import partial
 import tkinter as tk
+from tkinter import *
+import tkinter.messagebox
 from PIL import ImageTk, Image
 import winsound
 common_ships = {
@@ -39,7 +40,8 @@ class Window(tk.Tk):
             l.grid(row=0, column=row+1)
             for col in range(len(matrix[row])):
                 if row == 0:
-                    l = Label(btns_frame, text=str(col + 1), font=('Futura', 12))
+                    l = Label(btns_frame, text=str(
+                        col + 1), font=('Futura', 12))
                     l.grid(row=col+1, column=0)
                 i = matrix[row][col]
                 img = Image.open(str(number_to_path[i]))
@@ -51,7 +53,9 @@ class Window(tk.Tk):
 
         btns_frame.place(x=xc, y=yc)
 
-    def place_ships(self, matrix, ships):
+    def place_ships(self, player):
+        matrix = player.sea.matrix
+        ships = player.sea.ships
         a = []
         b = []
         c = []
@@ -92,7 +96,7 @@ class Window(tk.Tk):
         e3 = Entry(self, textvariable=dir1, font=(
             'Futura', 12)).place(x=1400, y=250)
         button1 = Button(self, text="Place Ship", image=test, command=partial(
-            self.get_ship, x1, y1, dir1, a, b, c, matrix, "carrier", ships)).place(x=1600, y=250)
+            self.get_ship, x1, y1, dir1, a, b, c, matrix, "carrier", ships, player)).place(x=1600, y=250)
         e4 = Entry(self, textvariable=x2, font=(
             'Futura', 12)).place(x=1000, y=400)
         e5 = Entry(self, textvariable=y2, font=(
@@ -100,7 +104,7 @@ class Window(tk.Tk):
         e6 = Entry(self, textvariable=dir2, font=(
             'Futura', 12)).place(x=1400, y=400)
         button2 = Button(self, text="Place Ship", image=test, command=partial(
-            self.get_ship, x2, y2, dir2, a, b, c, matrix, "battleship", ships)).place(x=1600, y=400)
+            self.get_ship, x2, y2, dir2, a, b, c, matrix, "battleship", ships, player)).place(x=1600, y=400)
         e7 = Entry(self, textvariable=x3, font=(
             'Futura', 12)).place(x=1000, y=550)
         e8 = Entry(self, textvariable=y3, font=(
@@ -108,7 +112,7 @@ class Window(tk.Tk):
         e9 = Entry(self, textvariable=dir3, font=(
             'Futura', 12)).place(x=1400, y=550)
         button3 = Button(self, text="Place Ship", image=test, command=partial(
-            self.get_ship, x3, y3, dir3, a, b, c, matrix, "cruiser", ships)).place(x=1600, y=550)
+            self.get_ship, x3, y3, dir3, a, b, c, matrix, "cruiser", ships, player)).place(x=1600, y=550)
         e10 = Entry(self, textvariable=x4, font=(
             'Futura', 12)).place(x=1000, y=700)
         e11 = Entry(self, textvariable=y4, font=(
@@ -116,7 +120,7 @@ class Window(tk.Tk):
         e12 = Entry(self, textvariable=dir4, font=(
             'Futura', 12)).place(x=1400, y=700)
         button4 = Button(self, text="Place Ship", image=test, command=partial(
-            self.get_ship, x4, y4, dir4, a, b, c, matrix, "submarine", ships)).place(x=1600, y=700)
+            self.get_ship, x4, y4, dir4, a, b, c, matrix, "submarine", ships, player)).place(x=1600, y=700)
         e13 = Entry(self, textvariable=x5, font=(
             'Futura', 12)).place(x=1000, y=850)
         e14 = Entry(self, textvariable=y5, font=(
@@ -124,7 +128,7 @@ class Window(tk.Tk):
         e15 = Entry(self, textvariable=dir5, font=(
             'Futura', 12)).place(x=1400, y=850)
         button5 = Button(self, text="Place Ship", image=test, command=partial(
-            self.get_last_ship, x5, y5, dir5, a, b, c, matrix, "destroyer", var1, ships))
+            self.get_last_ship, x5, y5, dir5, a, b, c, matrix, "destroyer", var1, ships, player))
         button5.place(x=1600, y=850)
         button5.wait_variable(var1)
 
@@ -134,14 +138,21 @@ class Window(tk.Tk):
                 children.destroy()
                 self.limg.pack()
 
-    def get_ship(self, x, y, dir, a, b, c, matrix, ship, ships):
+    def get_ship(self, x, y, dir, a, b, c, matrix, ship, ships, player):
+        if not player.sea.check_out_of_bounds(int(x.get())-1, int(y.get())-1, dir.get(), ship) or not player.sea.has_collision(int(x.get())-1, int(y.get())-1, dir.get(), ship, matrix):
+            tk.messagebox.showerror("Error", "Invalid ship placement")
+            return
         a.append(x.get())
         b.append(y.get())
         c.append(dir.get())
         self.place_ship(matrix, ship, a, b, c, ships)
         self.initialize_matrix(matrix, 150, 200)
 
-    def get_last_ship(self, x, y, dir, a, b, c, matrix, ship, var, ships):
+    def get_last_ship(self, x, y, dir, a, b, c, matrix, ship, var, ships, player):
+        if not player.sea.check_out_of_bounds(int(x.get())-1, int(y.get())-1, dir.get(), ship) or not player.sea.has_collision(int(x.get())-1, int(y.get())-1, dir.get(), ship, matrix):
+            tk.messagebox.showerror(
+                title="Error", message="Invalid ship placement")
+            return
         a.append(x.get())
         b.append(y.get())
         c.append(dir.get())
@@ -173,7 +184,7 @@ class Window(tk.Tk):
             dir = c[4]
         if dir == "h":
             for i in range(ships[ship]):
-                matrix[int(x)-1][int(y) + i -1] = 1
+                matrix[int(x)-1][int(y) + i - 1] = 1
         else:
             for i in range(ships[ship]):
                 matrix[int(x)-1 + i][int(y)-1] = 1
@@ -216,8 +227,7 @@ class Game():
         self.window.mainloop()
 
     def play_game(self):
-        self.window.place_ships(self.player1.sea.matrix,
-                                self.player1.sea.ships)
+        self.window.place_ships(self.player1)
         self.window.initialize_matrix(self.player1.visible_matrix, 1000, 200)
         while not self.winner:
             self.take_turn()
@@ -289,11 +299,15 @@ class Sea:
 
     def check_out_of_bounds(self, x, y, dir, ship):
         if dir == "h":
-            return y + self.ships[ship] <= 9
+            return y + self.ships[ship] <= 10
         else:
-            return x + self.ships[ship] <= 9
+            return x + self.ships[ship] <= 10
 
     def has_collision(self, x, y, dir, ship, matrix):
+        print(x)
+        print(y)
+        print(type(x))
+        print(type(y))
         if dir == "h":
             for i in range(self.ships[ship]):
                 if (y+i >= 9 or matrix[x][y+i] == 1 or matrix[x+1][y+i] == 1 or matrix[x-1][y+i] == 1 or matrix[x][y+i+1] == 1 or matrix[x][y+i-1] == 1):
