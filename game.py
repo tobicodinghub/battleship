@@ -4,7 +4,6 @@ from functools import partial
 import tkinter as tk
 from PIL import ImageTk, Image
 import winsound
-import customtkinter as ctk
 common_ships = {
     "carrier": 5,
     "battleship": 4,
@@ -36,14 +35,19 @@ class Window(tk.Tk):
         btns_frame.pack()
 
         for row in range(len(matrix)):
+            l = Label(btns_frame, text=str(row + 1), font=('Futura', 12))
+            l.grid(row=0, column=row+1)
             for col in range(len(matrix[row])):
+                if row == 0:
+                    l = Label(btns_frame, text=str(col + 1), font=('Futura', 12))
+                    l.grid(row=col+1, column=0)
                 i = matrix[row][col]
                 img = Image.open(str(number_to_path[i]))
                 img = img.resize((64, 64))
                 test = ImageTk.PhotoImage(img)
                 label = Label(btns_frame, image=test)
                 label.image = test
-                label.grid(row=row + 1, column=col)
+                label.grid(row=row + 1, column=col+1)
 
         btns_frame.place(x=xc, y=yc)
 
@@ -139,9 +143,6 @@ class Window(tk.Tk):
         a.append(x.get())
         b.append(y.get())
         c.append(dir.get())
-        print(a)
-        print(b)
-        print(c)
         self.destroy_frame()
         self.place_ship(matrix, ships, a, b, c)
         self.initialize_matrix(matrix, 150, 200)
@@ -179,12 +180,18 @@ class Window(tk.Tk):
     def return_coords(self, player, computer):
         var2 = tk.IntVar()
         xcoord = StringVar()
+        xcoord.set("1")
         ycoord = StringVar()
-        entry1 = Entry(self, textvariable=xcoord).place(x=820, y=800)
-        entry2 = Entry(self, textvariable=ycoord).place(x=950, y=800)
-        button6 = tk.Button(self, text="Submit coords", command=partial(
+        ycoord.set("1")
+        OPTIONS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
+        OptionMenu(self, xcoord, *OPTIONS).place(x=900, y=500)
+        OptionMenu(self, ycoord, *OPTIONS).place(x=900, y=540)
+        img = Image.open("coordsbutton.png")
+        img = img.resize((120, 70), Image.ANTIALIAS)
+        test = ImageTk.PhotoImage(img)
+        button6 = tk.Button(self, image=test, command=partial(
             self.return_coords2, xcoord, ycoord, player, computer, var2))
-        button6.place(x=900, y=850)
+        button6.place(x=860, y=580)
         button6.wait_variable(var2)
 
     def return_coords2(self, xcoord, ycoord, player, computer, var):
@@ -242,15 +249,15 @@ class Player():
         self.visible_matrix = [[0 for x in range(10)] for y in range(10)]
 
     def take_shot(self, computer, x, y):
-        if computer.sea.matrix[int(x)][int(y)] == 1:
+        if computer.sea.matrix[int(x)-1][int(y)-1] == 1:
             winsound.PlaySound('hit.wav', winsound.SND_FILENAME)
-            computer.sea.matrix[int(x)][int(y)] = 2
-            self.visible_matrix[int(x)][int(y)] = "H"
+            computer.sea.matrix[int(x)-1][int(y)-1] = 2
+            self.visible_matrix[int(x)-1][int(y)-1] = "H"
             self.tiles_sunk += 1
         else:
             winsound.PlaySound('miss.wav', winsound.SND_FILENAME)
-            computer.sea.matrix[int(x)][int(y)] = 3
-            self.visible_matrix[int(x)][int(y)] = "W"
+            computer.sea.matrix[int(x)-1][int(y)-1] = 3
+            self.visible_matrix[int(x)-1][int(y)-1] = "W"
 
 
 class Computer():
